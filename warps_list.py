@@ -72,16 +72,18 @@ def get_pos_simple(data: dict[str, list[str]]):
     position: dict[str, list[list[int]]] = {}
     _version_count = -1
     for v, names in data.items():
-        if v[-1] == "上":
+        if v[-1] == "1":
             _version_count += 1
         for i in range(len(names)):
             if names[i] not in position:
                 position[names[i]] = [[0]]
-            if v[-1] == "上":
+            if v[-1] == "1":
                 w = MARGIN + SIZE * (3 - i) + PADDING
+            elif v == "3.8.3":
+                w = MARGIN + MIDDLE + SIZE * (6 + i) + PADDING
             else:
                 w = MARGIN + MIDDLE + SIZE * (4 + i) + PADDING
-            h = HEAD + SIZE * _version_count + PADDING
+            h = MARGIN + HEAD + SIZE * _version_count + PADDING
             position[names[i]].append([h, w])
     return position, versions
 
@@ -149,6 +151,12 @@ def background(
             draw.text((w, h + SIZE / 2), f"{x + 1}.{y}", "black", font, "mm")
             h += SIZE
 
+    # 3.8.3
+    _w, _h = im.size[0] - MARGIN - SIZE * 2, MARGIN + HEAD + SIZE * 23
+    draw.rectangle((_w - 8, _h, _w + 8, h + SIZE - 1), "#ffd24d")
+    size = (MARGIN + SIZE, _h + SIZE / 2)
+    draw.text(size, "注：3.8 有三期跃迁", "black", font_cn, "mm")
+
     size = (im.size[0] / 2, MARGIN + HEAD / 2)
     draw.text(size, f"截 至 {len(versions)}.{versions[-1] - 1}", "black", font_cn, "mm")
     size = (MARGIN + SIZE * 2, MARGIN + HEAD / 2)
@@ -171,7 +179,7 @@ def background(
 
 def draw_circle(bg, pos):
     center = (pos[1] + RAW_SIZE // 2, pos[0] + RAW_SIZE // 2)
-    cv2.circle(bg, center, (RAW_SIZE + 10) // 2, (24, 160, 236), 10)
+    cv2.circle(bg, center, (RAW_SIZE + 10) // 2, (77, 210, 255), 10)
 
 
 def paste(bg, img_dir: pathlib.Path, positions: dict[str, list[list[int]]]):
